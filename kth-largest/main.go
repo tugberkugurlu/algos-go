@@ -3,6 +3,7 @@ package main
 import (
 	"container/heap"
 	"fmt"
+	"sort"
 )
 
 type IntHeap []int
@@ -32,10 +33,28 @@ func (h *IntHeap) Pop() interface{} {
 }
 
 func main() {
-	fmt.Println(FindLargestKthElement([]int{3,2,3,1,2,4,5,5,6}, 4))
+	nums := []int{3,2,20,5,3,1,2,5,6,9,10,4}
+
+	// initialize the heap data structure
+	h := &IntHeap{}
+
+	// add all the values to heap, O(n log n)
+	for _, val := range nums { // O(n)
+		heap.Push(h, val) // O(log n)
+	}
+
+	// print all the values from the heap
+	// which should be in ascending order
+	for i := 0; i < len(nums); i++ {
+		fmt.Printf("%d,", heap.Pop(h).(int))
+	}
+
+	fmt.Println()
+	fmt.Println(FindLargestKthElement(nums, 4))
+	fmt.Println(FindLargestKthElementWithSort(nums, 4))
 }
 
-// O(N log K + N-K log K)
+// O(n log k + n-k log k)
 // https://leetcode.com/problems/kth-largest-element-in-an-array/
 func FindLargestKthElement(nums []int, k int) int {
 	h := &IntHeap{}
@@ -47,4 +66,12 @@ func FindLargestKthElement(nums []int, k int) int {
 	}
 
 	return heap.Pop(h).(int) // O(log K)
+}
+
+// O (n log n)
+func FindLargestKthElementWithSort(nums []int, k int) int {
+	sort.Slice(nums, func(i, j int) bool { // O (n log n)
+		return nums[i] < nums[j]
+	})
+	return nums[len(nums)-k] // O(1)
 }
