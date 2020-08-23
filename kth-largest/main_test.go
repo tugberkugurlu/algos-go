@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
-var testdata = []struct {
+var kthElementTestdata = []struct {
 	in  []int
 	k   int
 	f   func(nums []int, k int) int
@@ -18,8 +19,31 @@ var testdata = []struct {
 	{[]int{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4, FindLargestKthElementWithSort, 4},
 }
 
-func TestLogic(t *testing.T) {
-	for _, tt := range testdata {
+var bestElementsTestdata = []struct {
+	in  []int
+	k   int
+	f   func(nums []int, k int) []int
+	out []int
+}{
+	{[]int{3, 2, 1, 5, 6, 4}, 2, FindBestKElements, []int{6,5}},
+	{[]int{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4, FindBestKElements, []int{6,5,5,4}},
+	{[]int{3, 2, 1, 5, 6, 4}, 2, FindBestKElementsWithSort, []int{6,5}},
+	{[]int{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4, FindBestKElementsWithSort, []int{6,5,5,4}},
+}
+
+func TestKthElementLogic(t *testing.T) {
+	for _, tt := range bestElementsTestdata {
+		t.Run(fmt.Sprintf("%v", tt.in), func(t *testing.T) {
+			out := tt.f(tt.in, tt.k)
+			if !reflect.DeepEqual(out, tt.out) {
+				t.Errorf("got %q, want %q", out, tt.out)
+			}
+		})
+	}
+}
+
+func TestBestElementsLogic(t *testing.T) {
+	for _, tt := range kthElementTestdata {
 		t.Run(fmt.Sprintf("%v", tt.in), func(t *testing.T) {
 			out := tt.f(tt.in, tt.k)
 			if out != tt.out {
@@ -61,3 +85,24 @@ func BenchmarkFindLargestKthElementWithSortK500(b *testing.B) {
 	}
 }
 
+func BenchmarkFindBestKElementsK500(b *testing.B) {
+	k := 500
+	for n := 0; n < b.N; n++ {
+		nums2 := make([]int, len(nums))
+		for i, v := range nums {
+			nums2[i] = v
+		}
+		FindBestKElements(nums2, k)
+	}
+}
+
+func BenchmarkFindBestKElementsWithSortK500(b *testing.B) {
+	k := 500
+	for n := 0; n < b.N; n++ {
+		nums2 := make([]int, len(nums))
+		for i, v := range nums {
+			nums2[i] = v
+		}
+		FindBestKElementsWithSort(nums2, k)
+	}
+}

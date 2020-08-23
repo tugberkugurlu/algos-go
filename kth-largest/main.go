@@ -51,7 +51,9 @@ func main() {
 
 	fmt.Println()
 	fmt.Println(FindLargestKthElement(nums, 4))
+	fmt.Println(FindBestKElements(nums, 4))
 	fmt.Println(FindLargestKthElementWithSort(nums, 4))
+	fmt.Println(FindBestKElementsWithSort(nums, 4))
 }
 
 // O(n log k + n-k log k)
@@ -68,10 +70,46 @@ func FindLargestKthElement(nums []int, k int) int {
 	return heap.Pop(h).(int) // O(log K)
 }
 
+// O(n log k + n-k log k + k log k)
+// simplified: // O(n log k + k log k)
+func FindBestKElements(nums []int, k int) []int {
+	h := &IntHeap{}
+	for _, val := range nums { // O(N)
+		heap.Push(h, val) // O(log K)
+		if h.Len() > k {
+			heap.Pop(h) // O(log K)
+		}
+	}
+
+	return func() []int {
+		result := make([]int, h.Len())
+		initialLen := h.Len()
+		for i := initialLen; i > 0; i-- {
+			result[i-1] = heap.Pop(h).(int)
+		}
+		return result
+	}()
+}
+
 // O (n log n)
 func FindLargestKthElementWithSort(nums []int, k int) int {
 	sort.Slice(nums, func(i, j int) bool { // O (n log n)
 		return nums[i] < nums[j]
 	})
 	return nums[len(nums)-k] // O(1)
+}
+
+// O (n log n + k)
+func FindBestKElementsWithSort(nums []int, k int) []int {
+	sort.Slice(nums, func(i, j int) bool { // O (n log n)
+		return nums[i] > nums[j]
+	})
+
+	return func() []int {
+		result := make([]int, k)
+		for i := 0; i < k; i++ {
+			result[i] = nums[i]
+		}
+		return result
+	}()
 }
