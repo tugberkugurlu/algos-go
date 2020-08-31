@@ -6,5 +6,11 @@ github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/hako/durafmt v0.0.0-20200710122514-c0fb7b4da026
+## explicit
+github.com/hako/durafmt
 # github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 github.com/oliveagle/jsonpath
+# github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26
+## explicit
+github.com/umahmood/haversine
