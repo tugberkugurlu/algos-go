@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
 	"github.com/hako/durafmt"
 )
 
@@ -11,34 +12,34 @@ func main() {
 	trip := Trip{
 		Name:      "Barcelona 2020",
 		TripStart: func() time.Time { val, _ := time.Parse("2006-Jan-02", "2020-Sep-05"); return val }(),
-		TripEnd: func() time.Time { val, _ := time.Parse("2006-Jan-02", "2020-Sep-10"); return val }(),
+		TripEnd:   func() time.Time { val, _ := time.Parse("2006-Jan-02", "2020-Sep-10"); return val }(),
 		Members: map[string]bool{
 			"Alice": true,
-			"Bob": true,
+			"Bob":   true,
 			"Steve": true,
 		},
 		Locations: []Location{
 			{
-				Name: "Park Güell",
-				Latitude: 41.4145,
+				Name:      "Park Güell",
+				Latitude:  41.4145,
 				Longitude: 2.1527,
 			},
 			{
-				Name: "La Rambla",
-				Latitude: 41.380775,
+				Name:      "La Rambla",
+				Latitude:  41.380775,
 				Longitude: 2.173661,
 			},
 			{
-				Name: "Camp Nou",
-				Latitude: 41.3809,
+				Name:      "Camp Nou",
+				Latitude:  41.3809,
 				Longitude: 2.1228,
 			},
 		},
 	}
 
 	target := Location{
-		Name: "Josep Tarradellas Barcelona-El Prat Airport",
-		Latitude: 41.2974,
+		Name:      "Josep Tarradellas Barcelona-El Prat Airport",
+		Latitude:  41.2974,
 		Longitude: 2.0833,
 	}
 
@@ -46,9 +47,16 @@ func main() {
 	length := trip.Length()
 	xmasTime, _ := time.Parse("2006-Jan-02", "2020-Dec-25")
 	isDuringXMasTime := trip.IsDuringTrip(xmasTime)
-	isBobInTheTrip := trip.IsMemberInTrip("Bob")
-	isBarbaraInTheTrip := trip.IsMemberInTrip("Barbara")
+	membersToCheck := []string{"Bob", "Barbara"}
 
+	printTrip(trip, length, isDuringXMasTime, membersToCheck, target, closestLocs)
+
+	trip.Members["Barbara"] = true
+	printTrip(trip, length, isDuringXMasTime, membersToCheck, target, closestLocs)
+}
+
+func printTrip(trip Trip, length time.Duration, isDuringXMasTime bool, membersToCheck []string, target Location, closestLocs []LocationWithDistance) {
+	fmt.Println("====================")
 	fmt.Printf("Trip '%s' will start at %s and end at %s, and it will last %s.\n",
 		trip.Name,
 		trip.TripStart.Format("2006-Jan-02"),
@@ -59,8 +67,9 @@ func main() {
 	} else {
 		fmt.Println("The trip is not going to be during christmas time. ")
 	}
-	printIsInTheTrip("Bob", isBobInTheTrip)
-	printIsInTheTrip("Barbara", isBarbaraInTheTrip)
+	for _, memberToCheck := range membersToCheck {
+		printIsInTheTrip(memberToCheck, trip.IsMemberInTrip(memberToCheck))
+	}
 	fmt.Printf("The trip will start at '%s', and the following locations will be visited in order:\n", target.Name)
 	fmt.Printf("%s\n", func() string {
 		result := make([]string, len(closestLocs))
@@ -69,6 +78,7 @@ func main() {
 		}
 		return strings.Join(result, ", ")
 	}())
+	fmt.Println("====================")
 }
 
 func printIsInTheTrip(name string, isInTrip bool) {
